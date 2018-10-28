@@ -6,14 +6,14 @@ import javax.net.ssl.SSLSocket
 
 class Main {
 	static void main(String[] args) {
-		SSLServerSocketFactory sslServerSocketFactory = SSLServerSocketFactory.default as SSLServerSocketFactory
-		SSLServerSocket sslServerSocket = sslServerSocketFactory.createServerSocket(1234) as SSLServerSocket
-		SSLSocket sslSocket = sslServerSocket.accept() as SSLSocket
-		DataInputStream dataInputStream = new DataInputStream(sslSocket.inputStream)
-		PrintStream os = new PrintStream(sslSocket.outputStream)
-		while(true) {
-			String input = dataInputStream.readUTF()
-			os.println(input)
+		SSLServerSocket serverSocket = SSLServerSocketFactory.default.createServerSocket(1234) as SSLServerSocket
+
+		while (true) {
+			SSLSocket socket = serverSocket.accept() as SSLSocket
+
+			socket.inputStream.eachLine {
+				println it
+			}
 		}
 	}
 }

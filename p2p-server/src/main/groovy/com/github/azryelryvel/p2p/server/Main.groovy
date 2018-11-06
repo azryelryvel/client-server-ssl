@@ -11,9 +11,18 @@ class Main {
 		while (true) {
 			SSLSocket socket = serverSocket.accept() as SSLSocket
 
-			socket.inputStream.eachLine {
-				println it
+			println 'Incoming connection from ' + socket.inetAddress.canonicalHostName + ":" + socket.port
+			Reader reader = socket.inputStream.newReader()
+
+			String line
+			while ((line = reader.readLine()) != null) {
+				println "Received: $line"
+				println "Sending: $line"
+				Writer writer = socket.outputStream.newPrintWriter()
+				writer.write(line + '\n')
+				writer.flush()
 			}
 		}
+
 	}
 }

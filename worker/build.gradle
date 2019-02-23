@@ -1,0 +1,42 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'com.github.azryelryvel.p2p.worker.Main'
+
+String keystore
+String keystorePassword
+
+if (project.hasProperty('sslConf')) {
+	keystore = project.sslConf.keystore.path
+	keystorePassword = project.sslConf.password
+} else if (new File('build/ssl/worker.p12').exists()) {
+	keystore = 'build/ssl/worker.p12'
+	keystorePassword = 'password'
+} else {
+	throw new Exception('No SSL certificate available for  connection')
+}
+
+applicationDefaultJvmArgs += [
+	"-Djavax.net.ssl.keyStore=$keystore",
+	"-Djavax.net.ssl.keyStorePassword=$keystorePassword",
+	'-Djavax.net.ssl.keyStoreType=pkcs12',
+	"-Djavax.net.ssl.trustStore=$keystore",
+	"-Djavax.net.ssl.trustStorePassword=$keystorePassword",
+	'-Djavax.net.ssl.trustStoreType=pkcs12',
+	"-Djavax.net.ssl.trustAnchors=$keystore"
+]
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation "com.github.atomashpolskiy:bt-core:1.7"
+	implementation "com.github.atomashpolskiy:bt-upnp:1.7"
+	implementation "com.github.atomashpolskiy:bt-dht:1.7"
+	implementation "com.github.atomashpolskiy:bt-http-tracker-client:1.7"
+}
+
+run{
+	standardInput = System.in
+}

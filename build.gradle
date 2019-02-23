@@ -36,13 +36,13 @@ allprojects { Project p ->
 }
 
 
-task importServerCertToClientKeystore(type: Exec, dependsOn: [childProjects['p2p-server'].exportCertificate, childProjects['p2p-client'].initKeystore]) {
+task importWorkerCertToClientKeystore(type: Exec, dependsOn: [childProjects['worker'].exportCertificate, childProjects['client'].initKeystore]) {
 	onlyIf {
-		Process p = "keytool -list -keystore ${childProjects['p2p-client'].sslConf.keystore.path} -alias ${childProjects['p2p-server'].sslConf.alias}  -storepass ${childProjects['p2p-client'].sslConf.password}".execute()
+		Process p = "keytool -list -keystore ${childProjects['client'].sslConf.keystore.path} -alias ${childProjects['worker'].sslConf.alias}  -storepass ${childProjects['client'].sslConf.password}".execute()
 		p.waitFor()
 		return p.exitValue() != 0
 	}
-	commandLine 'keytool', '-importcert', '-storetype', 'pkcs12', '-noprompt', '-file', childProjects['p2p-server'].sslConf.certificate, '-keystore', childProjects['p2p-client'].sslConf.keystore, '-alias', childProjects['p2p-server'].sslConf.alias, '-storepass', childProjects['p2p-client'].sslConf.password
+	commandLine 'keytool', '-importcert', '-storetype', 'pkcs12', '-noprompt', '-file', childProjects['worker'].sslConf.certificate, '-keystore', childProjects['client'].sslConf.keystore, '-alias', childProjects['worker'].sslConf.alias, '-storepass', childProjects['client'].sslConf.password
 }
 
 task clean(type: Delete) {

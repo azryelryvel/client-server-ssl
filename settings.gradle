@@ -1,3 +1,3 @@
 rootProject.name = 'p2p-toolkit'
 
-include 'p2p-server', 'p2p-client'
+include 'worker', 'client'
